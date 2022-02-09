@@ -66,7 +66,7 @@ public class DottedLine : MonoBehaviour
             if (ray.collider.tag == "wall")
             {
                 Debug.DrawLine(start, end, Color.blue, 10.0f);
-                // DrawOneLine(start, end, direction, true);
+                DrawOneLine(start, end, direction, true);
                 while (ray.collider != null && ray.collider.tag == "wall")
                 {
                     Debug.Log(ray.collider.name);
@@ -89,52 +89,40 @@ public class DottedLine : MonoBehaviour
                     {
                         Debug.DrawLine(newStart, end, Color.blue, 10.0f);
                         pos.Add(end);
-                        // DrawOneLine(newStart, end, direction, false);
+                        DrawOneLine(newStart, end, direction, false);
+                    }else{
+
                     }
                 }
 
 
 
             }
-            foreach (var p in pos)
-            {
-                GameObject dot = Instantiate(listDot[0], p, Quaternion.identity, transform.parent);
-                dots.Add(dot);
-            }
+
         }
         // Render();
 
     }
     public void DrawOneLine(Vector2 start, Vector2 end, Vector2 direction, bool drawFirst)
     {
-        // Debug.Log($"Start: {start} End: {end} Direction: {direction}");
-        Vector2 point = start;
-
-        // Debug.Log($" {(end - start).magnitude} > {(point - start).magnitude}  is : {(end - start).magnitude > (point - start).magnitude}");
-
-        float dist = Vector2.Distance(start, end);
-        // var temp = Delta / dist;
-
-        while ((end - start).magnitude > (point - start).magnitude)
+        if (end != Vector2.zero)
         {
-            // if (drawFirst)
-            // positions.Add(point);
-            GameObject dot = Instantiate(listDot[0], point, Quaternion.identity, transform.parent);
-            dots.Add(dot);
-            point += (direction * Delta);
-            GameObject dot1 = Instantiate(listDot[0], point, Quaternion.identity, transform.parent);
-            dots.Add(dot1);
-            // Debug.Log(point);
-            // Debug.Log(point);
-            // drawFirst = true;
+            Vector2 point = start;
+            float dist = Vector2.Distance(start, end);
+            while ((end - start).magnitude > (point - start).magnitude)
+            {
+                GameObject dot = Instantiate(listDot[0], point, Quaternion.identity, transform.parent);
+                dots.Add(dot);
+                point += (direction * Delta);
+                GameObject dot1 = Instantiate(listDot[0], point, Quaternion.identity, transform.parent);
+                dots.Add(dot1);
+            }
+        }
+        else
+        {
+
         }
 
-        // string result = "List contents: ";
-        // foreach (var item in positions)
-        // {
-        //     result += item.ToString() + ", ";
-        // }
-        // Debug.Log(result);
     }
     private void Render()
     {

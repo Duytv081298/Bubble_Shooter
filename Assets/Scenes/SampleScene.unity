@@ -391,7 +391,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 651323360}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.53, y: 0, z: 0}
+  m_LocalPosition: {x: -5.2, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2034175133}
@@ -410,7 +410,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.23721276, y: 0.83024406}
+  m_Offset: {x: -0.23721278, y: 11.288652}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -421,7 +421,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.52557445, y: 17.921177}
+  m_Size: {x: 0.17, y: 38.837997}
   m_EdgeRadius: 0
 --- !u!1 &678802727
 GameObject:
@@ -810,6 +810,10 @@ PrefabInstance:
     - target: {fileID: 9072701243641230064, guid: edebf3ff74d52b64ebc1baab7c1cb411, type: 3}
       propertyPath: m_Name
       value: B_Blue
+      objectReference: {fileID: 0}
+    - target: {fileID: 9072701243641230064, guid: edebf3ff74d52b64ebc1baab7c1cb411, type: 3}
+      propertyPath: m_TagString
+      value: Player
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: edebf3ff74d52b64ebc1baab7c1cb411, type: 3}
@@ -1891,7 +1895,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1550399697}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.01, y: 0, z: 0}
+  m_LocalPosition: {x: 5.66, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2034175133}
@@ -1910,7 +1914,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.23721276, y: 0.83024406}
+  m_Offset: {x: -0.23721278, y: 11.324105}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -1921,7 +1925,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.52557445, y: 17.921177}
+  m_Size: {x: 0.17, y: 38.90889}
   m_EdgeRadius: 0
 --- !u!1 &1595682047
 GameObject:
@@ -2358,7 +2362,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Dot: {fileID: 21300000, guid: 96f0d3479bd86204ebfc60edb131ac36, type: 3}
   Size: 0
-  Delta: 7.3
+  Delta: 0.7
   listDot:
   - {fileID: 8646397000143210396, guid: 0251ffaa8a663bb42b265a5a8047803b, type: 3}
   - {fileID: 109149954728005965, guid: 1702740b640b8f245ad2ae4047cdd215, type: 3}
