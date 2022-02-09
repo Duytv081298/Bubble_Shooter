@@ -1,0 +1,23 @@
+{
+    "steps_num": 25,
+    "target_scores": [
+        1083,
+        2166,
+        3700
+    ],
+    "id": 0,
+    "bubbles": [
+        {
+            "id": 100,
+            "x": 0,
+            "y": 0,
+            "is_invalid": true
+        },
+        {
+            "id": 100,
+            "x": 1,
+            "y": 0,
+            "is_invalid": true
+        }
+    ]
+}
