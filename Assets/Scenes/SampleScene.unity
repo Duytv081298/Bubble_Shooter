@@ -1362,6 +1362,7 @@ MonoBehaviour:
   PlayerHalo: {fileID: 991915168}
   playerMain: {fileID: 177537921}
   playerExtra: {fileID: 40793271}
+  bubbleControllerTransform: {fileID: 1746578756}
 --- !u!1001 &1242061316
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2180,7 +2181,6 @@ MonoBehaviour:
   - {fileID: 3173678610116568958, guid: 4df71dfe42851da4b847a7b42e4b0259, type: 3}
   - {fileID: 1777991341743320255, guid: ebf7b252a165dbe46ba110081bc007da, type: 3}
   - {fileID: 2841296053660241650, guid: 1de7e6478eb4e944597701731052b916, type: 3}
-  camW: 0
 --- !u!1 &1833348034
 GameObject:
   m_ObjectHideFlags: 0
