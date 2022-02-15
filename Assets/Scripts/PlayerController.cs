@@ -1,46 +1,131 @@
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
-
 public class PlayerController : MonoBehaviour
 {
 
     [Header("List Prefabs bubbles:")]
-    [SerializeField]
-    private GameObject[] listBubbles;
+    [SerializeField] private GameObject[] listBubbles;
+    [SerializeField] private PlayerHalo PlayerHalo;
 
-    [SerializeField]
-    private PlayerHalo PlayerHalo;
-
-    private GameObject player;
+    private GameObject[] listPlayer = new GameObject[2];
 
     private Vector3 playerPos;
+    private Vector3 temPos;
 
-    private int id;
-    public Vector3 getPlayerPos()
+    private Vector2 screenSize;
+    private GameObject player;
+    private int[] listId = new int[2];
+
+    [SerializeField] private Transform playerMain;
+    [SerializeField] private Transform playerExtra;
+    [SerializeField] private Transform bubbleControllerTransform;
+    List<Vector3> listPosPlayerMove = new List<Vector3>();
+
+    private bool rotate = true;
+    private bool run = true;
+    public bool isRotate()
     {
-        return this.playerPos;
+        return this.rotate;
     }
-    public GameObject getPlayer()
+    public bool isRun()
     {
-        return this.player;
+        return this.run;
+    }
+    public int[] getId()
+    {
+        return this.listId;
+    }
+    public GameObject[] getPlayer()
+    {
+        return this.listPlayer;
+    }
+    public void setPlayer(Vector2 screenSize)
+    {
+        this.screenSize = screenSize;
+        listId[0] = Random.Range(0, listBubbles.Length);
+        listId[1] = Random.Range(0, listBubbles.Length);
+        playerPos = new Vector3(0f, -screenSize.y * 0.255f, -0.0001f);
+        temPos = new Vector3(0.78f, -screenSize.y * 0.337f, -0.0001f);
+        this.listPlayer[0] = Instantiate(listBubbles[listId[0]], playerPos, Quaternion.identity, playerMain);
+        this.listPlayer[1] = Instantiate(listBubbles[listId[1]], temPos, Quaternion.identity, playerExtra);
+
+        player = this.listPlayer[0];
+        PlayerHalo.SpawbHola(listId[0], playerPos.x, playerPos.y);
+    }
+    public void SpawnPlayer()
+    {
+        Debug.Log(1111111);
+        playerExtra.DORotate(new Vector3(0f, 0f, 128f), 0.5f, RotateMode.LocalAxisAdd)
+        .OnComplete(() =>
+        {
+            System.Array.Reverse(listPlayer);
+            System.Array.Reverse(listId);
+
+
+            listPlayer[0].transform.SetParent(playerMain);
+            listPlayer[1].transform.SetParent(bubbleControllerTransform);
+            Collider2D col = listPlayer[1].GetComponent<Collider2D>();
+            col.enabled = true;
+            PlayerHalo.DestroyHalo();
+            PlayerHalo.SpawbHola(listId[0], playerPos.x, playerPos.y);
+
+            listId[1] = Random.Range(0, listBubbles.Length);
+            this.listPlayer[1] = Instantiate(listBubbles[listId[1]], temPos, Quaternion.identity, playerExtra);
+
+            player = this.listPlayer[0];
+            run = true;
+        });
+
+
+
+    }
+    public void changPlayer()
+    {
+        rotate = false;
+        playerMain.DORotate(new Vector3(0f, 0f, 230f), 0.5f, RotateMode.LocalAxisAdd);
+        playerExtra.DORotate(new Vector3(0f, 0f, 128f), 0.5f, RotateMode.LocalAxisAdd)
+        .OnComplete(CompleteChangPlayer);
+        System.Array.Reverse(listPlayer);
+        System.Array.Reverse(listId);
+    }
+    private void CompleteChangPlayer()
+    {
+        listPlayer[0].transform.SetParent(playerMain);
+        listPlayer[1].transform.SetParent(playerExtra);
+        listPlayer[0].transform.position = playerPos;
+        listPlayer[1].transform.position = temPos;
+        PlayerHalo.DestroyHalo();
+        PlayerHalo.SpawbHola(listId[0], playerPos.x, playerPos.y);
+
+        player = this.listPlayer[0];
+        rotate = true;
+    }
+    public void Move(List<Vector3> listPos, Vector2[] time)
+    {
+        run = false;
+        listPosPlayerMove = listPos;
+        for (int i = 0; i < listPos.Count; i++)
+        {
+
+            if (i == listPos.Count - 1)
+                LeanTween.move(player, listPos[i], time[i].x)
+                       .setDelay(time[i].y)
+                       .setEase(LeanTweenType.linear)
+                       .setOnComplete(SpawnPlayer);
+            else
+                LeanTween.move(player, listPos[i], time[i].x)
+                       .setDelay(time[i].y)
+                       .setEase(LeanTweenType.linear);
+        }
+        // Sequence sequence = DOTween.Sequence();
+        // for (int i = 0; i < listPos.Count; i++)
+        // {
+        //     sequence.Append(player.transform.DOMove(listPos[i], time[i].x));
+        // }
+        // sequence.AppendCallback(SpawnPlayer);
     }
 
-    public void setPlayer(int id, Vector3 pos)
-    {
-        this.player = Instantiate(listBubbles[id], pos, Quaternion.identity, this.transform);
-        this.id = id;
-        this.playerPos = pos;
-        PlayerHalo.SpawbHola(id, pos.x, pos.y);
-    }
-    void Start()
-    {
 
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 }

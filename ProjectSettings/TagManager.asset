@@ -4,7 +4,16 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - wall
+  - Wall
+  - Bubble
+  - B_Blue
+  - B_Cyan
+  - B_Pink
+  - B_Green
+  - B_Purple
+  - B_Red
+  - B_Yellow
+  - B_white
   layers:
   - Default
   - TransparentFX

@@ -4,38 +4,27 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-    [SerializeField]
-    private GameHandler gameHandler;
-    private float camW;
-    private float camH;
+    [SerializeField] private GameHandler gameHandler;
+    private Vector2 screenSize;
+    private GameObject[] listPlayer;
+    private int[] listId;
+    private Vector2 playerPos;
+    private List<Vector3> listPosPlayerMove = new List<Vector3>();
+    [SerializeField] private BubbleController bubbleController;
+    [SerializeField] private PlayerController playerController;
+    [SerializeField] private LineController lineController;
+    private Vector2 mousePosMemory;
+    private Vector2 sizeBubble;
+    [SerializeField] private float speed;
 
-    private GameObject player;
-    // private int idPlayer = 0;
-
-    private Vector3 playerPos;
-
-    [SerializeField]
-    private Collider2D boundaryLeftCol;
-
-    [SerializeField]
-    private Collider2D boundaryRightCol;
-
-    List<RaycastHit2D> listHit = new List<RaycastHit2D>();
-
-    [SerializeField]
-    private BubbleController bubbleController;
-
-    [SerializeField]
-    private PlayerController playerController;
-    [SerializeField]
-    private LineDrawer lineDrawer;
 
 
     private void Awake()
     {
-        camH = 2f * Camera.main.orthographicSize;
-        camW = camH * Camera.main.aspect;
-        playerPos = new Vector3(0f, -camH * 0.255f, -0.0001f);
+        float camH = 2f * Camera.main.orthographicSize;
+        float camW = camH * Camera.main.aspect;
+        screenSize = new Vector2(camW, camH);
+        LeanTween.init(1600);
 
     }
     void Start()
@@ -45,9 +34,16 @@ public class GameController : MonoBehaviour
         Level level = gameHandler.getLevel();
         gameHandler.setLevel(level);
 
-        // bubbleController.setPosition(level.bubbles);
 
-        // playerController.setPlayer(idPlayer, playerPos);
+        bubbleController.setPosition(level.bubbles);
+        sizeBubble = bubbleController.getSize();
+
+        playerController.setPlayer(screenSize);
+        listId = playerController.getId();
+        listPlayer = playerController.getPlayer();
+        playerPos = listPlayer[0].transform.position;
+
+        lineController.setStart(playerPos, screenSize);
         // this.player = playerController.getPlayer();
         // Debug.Log(JsonUtility.ToJson(gameHandler.getLevel()));
     }
@@ -66,35 +62,38 @@ public class GameController : MonoBehaviour
     void Update()
     {
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector3 direction = (mousePos - playerPos).normalized;
+        Vector2 mousePosition = new Vector2(mousePos.x, mousePos.y);
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButton(0))
         {
-            // lineDrawer.Draw(playerPos, mousePos);
-
-            // RaycastHit2D hit = Physics2D.Raycast(mousePos, playerPos);
-            RaycastHit2D hit = Physics2D.Raycast(mousePos, direction);
-            // Debug.Log("direction: " +direction);
-            Debug.Log(hit.transform.name);
-            Debug.Log(hit.point);
-
-            if (hit.collider != null)
+            if (mousePosition.y > playerPos.y + 0.5 && playerController.isRun())
             {
-                var rayDir = Vector3.Reflect(((Vector3)hit.point - playerPos).normalized, hit.normal);
-                // hit.collider.enabled = !hit.collider.enabled;
-
-                RaycastHit2D hit1 = Physics2D.Raycast(hit.point, rayDir);
-                if (hit1.collider != null)
+                if (mousePosMemory != mousePosition)
                 {
-                    Debug.DrawLine(playerPos, hit.point, Color.yellow, 5.0f);
-                    // Debug.DrawLine(hit.point, hit1.point, Color.red, 5.0f);
-                    Debug.DrawRay(hit.point, rayDir, Color.blue, 5.0f);
-                    // Debug.Log(hit1.point);
-                    Debug.DrawLine(hit.point, hit1.point, Color.red, 5.0f);
-                    // Debug.DrawRay(hit.point, rayDir, Color.red, 5.0f);
+                    listId = playerController.getId();
+                    lineController.setIdDot(listId[0]);
+                    listPosPlayerMove = lineController.DrawPoints(mousePosition);
+                    mousePosMemory = mousePosition;
+                }
+                else
+                {
+                    lineController.MoveDots();
                 }
             }
+            else if (playerController.isRotate() && playerController.isRun())
+            {
+                lineController.DestroyAllDots();
+                changPlayer();
+            }
+        }
+        if (Input.GetMouseButtonUp(0))
+        {
+            if (mousePosition.y > playerPos.y + 0.5 && playerController.isRun())
+            {
+                MovePlayer();
+            }
 
+            lineController.DestroyAllDots();
 
         }
         // if (this.player)
@@ -103,14 +102,56 @@ public class GameController : MonoBehaviour
         // }
 
     }
-
-    public int getHit(Vector3 mousePos, Vector3 direction)
+    private void changPlayer()
     {
-        RaycastHit2D hit = Physics2D.Raycast(mousePos, direction);
-        if (hit.collider != null)
+        playerController.changPlayer();
+        listId = playerController.getId();
+        listPlayer = playerController.getPlayer();
+        // playerController.Tween();
+    }
+    private void MovePlayer()
+    {
+        Vector2 lastPos = listPosPlayerMove[listPosPlayerMove.Count - 1];
+        Vector2 index = LocationToIndex(lastPos);
+        Vector2 location = IndexToLocation(index);
+
+        listPosPlayerMove.RemoveAt(listPosPlayerMove.Count - 1);
+        listPosPlayerMove.Add(location);
+
+        Vector2[] listDistance = new Vector2[listPosPlayerMove.Count];
+        float total = 0f;
+        for (int i = 0; i < listPosPlayerMove.Count; i++)
         {
-            listHit.Add(hit);
+            float temp = i == 0 ? Vector2.Distance(playerPos, listPosPlayerMove[i]) / speed : Vector2.Distance(listPosPlayerMove[i - 1], listPosPlayerMove[i]) / speed;
+            listDistance[i] = new Vector2(temp, total);
+            total += temp;
         }
-        return 1;
+        playerController.Move(listPosPlayerMove, listDistance);
+    }
+    private Vector2 LocationToIndex(Vector2 mousePos)
+    {
+        float x = 0f;
+        float y = Mathf.Floor(((screenSize.y) * 0.5f - mousePos.y) / 0.87f);
+        if (y % 2 == 0)
+        {
+            x = Mathf.Floor(mousePos.x + screenSize.x * 0.5f - sizeBubble.x * 0.45f);
+            if (x > 10) x = 10;
+        }
+        else
+        {
+            x = Mathf.Floor(mousePos.x + screenSize.x * 0.5f);
+            if (x > 9) x = 10;
+        }
+        if (x < 0) x = 0;
+        return new Vector2(x, y);
+    }
+    private Vector2 IndexToLocation(Vector2 index)
+    {
+        Vector2 pos;
+        if (index.y % 2 == 0)
+            pos = new Vector2(-screenSize.x * 0.5f + sizeBubble.x * 0.95f + index.x, (screenSize.y - sizeBubble.y) * 0.5f - index.y * 0.87f);
+        else
+            pos = new Vector2(-screenSize.x * 0.5f + sizeBubble.x / 2 + index.x, (screenSize.y - sizeBubble.y) * 0.5f - index.y * 0.87f);
+        return pos;
     }
 }

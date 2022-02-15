@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 5136114611688448049}
   - component: {fileID: 8997114359781985656}
   - component: {fileID: -2846009053839842343}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: B_Green
-  m_TagString: Untagged
+  m_TagString: B_Green
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -90,7 +90,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3716762398706760840}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 0
