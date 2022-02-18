@@ -8,10 +8,24 @@ using Newtonsoft.Json;
 public class GameHandler : MonoBehaviour
 {
 
-    private int levelInt = 0;
+    [SerializeField]
+    private int levelInt;
 
 
     private Level level;
+
+    private int rowDefault;
+
+    public int getRowDefault()
+    {
+        return this.rowDefault;
+    }
+
+    public void setRowDefault(int rowDefault)
+    {
+        this.rowDefault = rowDefault;
+    }
+
 
     public int getLevelInt()
     {
@@ -51,7 +65,6 @@ public class GameHandler : MonoBehaviour
     private void Awake()
     {
         level = getdataLevel(this.levelInt);
-
     }
     public Level getdataLevel(int levelInt)
     {
@@ -59,14 +72,8 @@ public class GameHandler : MonoBehaviour
         string json = File.ReadAllText(url);
 
         Level lv = JsonConvert.DeserializeObject<Level>(json);
+        this.level = lv;
+        this.rowDefault = lv.bubbles[lv.bubbles.Length - 1].y + 1;
         return lv;
-    }
-    void Start()
-    {
-
-    }
-    void Update()
-    {
-
     }
 }

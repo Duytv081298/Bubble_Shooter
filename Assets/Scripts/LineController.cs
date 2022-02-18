@@ -12,36 +12,24 @@ public class LineController : MonoBehaviour
     List<Vector2> positions = new List<Vector2>();
     List<GameObject> dots = new List<GameObject>();
     List<Vector3> posWall = new List<Vector3>();
-
-    [SerializeField]
-    private GameObject[] listDot;
-
+    private List<List<BubbleMaps>> bubbleMaps = new List<List<BubbleMaps>>();
+    [SerializeField] private GameObject[] listDot;
     private int idDot;
     private bool isMOveDot = true;
-
-    public bool isIsMOveDot()
+    public void setBubbleMaps(List<List<BubbleMaps>> bubbleMaps)
     {
-        return this.isMOveDot;
+        this.bubbleMaps = bubbleMaps;
     }
-
-    public void setIsMOveDot(bool isMOveDot)
-    {
-        this.isMOveDot = isMOveDot;
-    }
-
-
     public void setIdDot(int idDot)
     {
         this.idDot = idDot;
     }
-
-
-    public void setStart(Vector2 start, Vector2 screenSize)
+    public void SetUp(Vector2 start, Vector2 screenSize, List<List<BubbleMaps>> bubbleMaps)
     {
         this.start = start;
         this.screenSize = screenSize;
+        this.bubbleMaps = bubbleMaps;
     }
-
     public List<Vector3> DrawPoints(Vector2 mousePosition)
     {
         DestroyAllDots();
@@ -58,9 +46,13 @@ public class LineController : MonoBehaviour
 
         if (ray.collider != null)
         {
-            if (ray.collider.tag == "Wall")
+            if (ray.transform.gameObject.layer == LayerMask.NameToLayer("Bubble"))
             {
-                posWall.Add(DrawOneLine(start, end, direction, true));
+                posWall.Add(AddPositions(start, end, direction, true));
+            }
+            else if (ray.collider.tag == "Wall")
+            {
+                posWall.Add(AddPositions(start, end, direction, true));
                 while (ray.collider != null && ray.collider.tag == "Wall")
                 {
                     Vector3 newRayPos = ray.point;
@@ -77,22 +69,18 @@ public class LineController : MonoBehaviour
 
                     if (end != Vector2.zero)
                     {
-                        posWall.Add(DrawOneLine(newStart, end, direction, false));
-                    }
-                    else
-                    {
+                        posWall.Add(AddPositions(newStart, end, direction, false));
 
                     }
                 }
             }
-            else if(ray.transform.gameObject.layer  == LayerMask.NameToLayer("Bubble")){
-                Debug.Log("bubble");
-                posWall.Add(DrawOneLine(start, end, direction, true));
-            }
+
         }
+        DrawLine();
+        posWall[posWall.Count - 1] = positions[positions.Count - 1];
         return posWall;
     }
-    public Vector2 DrawOneLine(Vector2 start, Vector2 end, Vector2 direction, bool drawFirst)
+    public Vector2 AddPositions(Vector2 start, Vector2 end, Vector2 direction, bool drawFirst)
     {
         Vector2 point = start;
         if (end != Vector2.zero)
@@ -103,19 +91,26 @@ public class LineController : MonoBehaviour
                 point += (direction * Delta);
                 if (point.x >= -screenSize.x / 2 && point.x <= screenSize.x / 2)
                 {
-                    GameObject dot = Instantiate(listDot[idDot], point, Quaternion.identity, transform);
                     positions.Add(point);
-                    dots.Add(dot);
                 }
             }
         }
-        else
+        return new Vector3(point.x, point.y, -0.01f);
+    }
+    public void DrawLine()
+    {
+
+        for (int i = positions.Count - 1; i >= 0; i--)
         {
-
+            Vector2 index = LocationToIndex(positions[i]);
+            if (bubbleMaps[(int)index.y][(int)index.x].is_exist) positions.RemoveAt(i);
+            else break;
         }
-
-        return new Vector3 (point.x, point.y, -0.01f);
-
+        foreach (var pos in positions)
+        {
+            GameObject dot = Instantiate(listDot[idDot], pos, Quaternion.identity, transform);
+            dots.Add(dot);
+        }
     }
     public void MoveDots()
     {
@@ -160,5 +155,32 @@ public class LineController : MonoBehaviour
         dots.Clear();
         positions.Clear();
         posWall.Clear();
+    }
+
+    private Vector2 LocationToIndex(Vector2 mousePos)
+    {
+        float x = 0f;
+        float y = Mathf.Floor(((screenSize.y) * 0.5f - mousePos.y) / 0.87f);
+        if (y % 2 == 0)
+        {
+            x = Mathf.Floor(mousePos.x + screenSize.x * 0.5f - GameDefine.SIZE_BUBBLE.x * 0.45f);
+            if (x > 10) x = 10;
+        }
+        else
+        {
+            x = Mathf.Floor(mousePos.x + screenSize.x * 0.5f);
+            if (x > 9) x = 10;
+        }
+        if (x < 0) x = 0;
+        return new Vector2(x, y);
+    }
+    private Vector2 IndexToLocation(Vector2 index)
+    {
+        Vector2 pos;
+        if (index.y % 2 == 0)
+            pos = new Vector2(-screenSize.x * 0.5f + GameDefine.SIZE_BUBBLE.x * 0.95f + index.x, (screenSize.y - GameDefine.SIZE_BUBBLE.y) * 0.5f - index.y * 0.87f);
+        else
+            pos = new Vector2(-screenSize.x * 0.5f + GameDefine.SIZE_BUBBLE.x / 2 + index.x, (screenSize.y - GameDefine.SIZE_BUBBLE.y) * 0.5f - index.y * 0.87f);
+        return pos;
     }
 }

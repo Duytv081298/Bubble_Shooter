@@ -41,11 +41,13 @@ public class PlayerController : MonoBehaviour
     {
         return this.listPlayer;
     }
-    public void setPlayer(Vector2 screenSize)
+    public void SetPlayer(Vector2 screenSize)
     {
         this.screenSize = screenSize;
         listId[0] = Random.Range(0, listBubbles.Length);
         listId[1] = Random.Range(0, listBubbles.Length);
+        listId[0] = Random.Range(1, 5);
+        listId[1] = Random.Range(1, 5);
         playerPos = new Vector3(0f, -screenSize.y * 0.255f, -0.0001f);
         temPos = new Vector3(0.78f, -screenSize.y * 0.337f, -0.0001f);
         this.listPlayer[0] = Instantiate(listBubbles[listId[0]], playerPos, Quaternion.identity, playerMain);
@@ -54,24 +56,26 @@ public class PlayerController : MonoBehaviour
         player = this.listPlayer[0];
         PlayerHalo.SpawbHola(listId[0], playerPos.x, playerPos.y);
     }
-    public void SpawnPlayer()
+    public void MoveEnd()
     {
-        Debug.Log(1111111);
-        playerExtra.DORotate(new Vector3(0f, 0f, 128f), 0.5f, RotateMode.LocalAxisAdd)
+        playerExtra.DORotate(new Vector3(0f, 0f, 128f), GameDefine.TIME_CHANGE_PLAYER, RotateMode.LocalAxisAdd)
         .OnComplete(() =>
         {
             System.Array.Reverse(listPlayer);
             System.Array.Reverse(listId);
 
-
             listPlayer[0].transform.SetParent(playerMain);
-            listPlayer[1].transform.SetParent(bubbleControllerTransform);
-            Collider2D col = listPlayer[1].GetComponent<Collider2D>();
-            col.enabled = true;
+            if (listPlayer[1])
+            {
+                listPlayer[1].transform.SetParent(bubbleControllerTransform);
+                Collider2D col = listPlayer[1].GetComponent<Collider2D>();
+                col.enabled = true;
+            }
             PlayerHalo.DestroyHalo();
             PlayerHalo.SpawbHola(listId[0], playerPos.x, playerPos.y);
 
             listId[1] = Random.Range(0, listBubbles.Length);
+            listId[1] = Random.Range(1,5);
             this.listPlayer[1] = Instantiate(listBubbles[listId[1]], temPos, Quaternion.identity, playerExtra);
 
             player = this.listPlayer[0];
@@ -81,16 +85,16 @@ public class PlayerController : MonoBehaviour
 
 
     }
-    public void changPlayer()
+    public void ChangePlayer()
     {
         rotate = false;
-        playerMain.DORotate(new Vector3(0f, 0f, 230f), 0.5f, RotateMode.LocalAxisAdd);
-        playerExtra.DORotate(new Vector3(0f, 0f, 128f), 0.5f, RotateMode.LocalAxisAdd)
-        .OnComplete(CompleteChangPlayer);
+        playerMain.DORotate(new Vector3(0f, 0f, 230f), GameDefine.TIME_CHANGE_PLAYER, RotateMode.LocalAxisAdd);
+        playerExtra.DORotate(new Vector3(0f, 0f, 128f), GameDefine.TIME_CHANGE_PLAYER, RotateMode.LocalAxisAdd)
+        .OnComplete(CompleteChangePlayer);
         System.Array.Reverse(listPlayer);
         System.Array.Reverse(listId);
     }
-    private void CompleteChangPlayer()
+    private void CompleteChangePlayer()
     {
         listPlayer[0].transform.SetParent(playerMain);
         listPlayer[1].transform.SetParent(playerExtra);
@@ -113,7 +117,7 @@ public class PlayerController : MonoBehaviour
                 LeanTween.move(player, listPos[i], time[i].x)
                        .setDelay(time[i].y)
                        .setEase(LeanTweenType.linear)
-                       .setOnComplete(SpawnPlayer);
+                       .setOnComplete(MoveEnd);
             else
                 LeanTween.move(player, listPos[i], time[i].x)
                        .setDelay(time[i].y)
@@ -124,8 +128,6 @@ public class PlayerController : MonoBehaviour
         // {
         //     sequence.Append(player.transform.DOMove(listPos[i], time[i].x));
         // }
-        // sequence.AppendCallback(SpawnPlayer);
+        // sequence.AppendCallback(MoveEnd);
     }
-
-
 }
