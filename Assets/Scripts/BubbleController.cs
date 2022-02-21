@@ -20,29 +20,30 @@ public class BubbleController : MonoBehaviour
         this.screenSize = screenSize;
         this.bubbleMaps = bubbleMaps;
         this.rowDefault = rowDefault;
-        this.rowBubbleHide = rowDefault - 11;
+        this.rowBubbleHide = rowDefault - 12;
     }
     public List<List<BubbleMaps>> setPosition(Bubble_level[] bubbles)
     {
+        float constant = screenSize.y * 0.5f - GameDefine.SIZE_TOP_BAR.y + GameDefine.HEIGHT_ROW * 0.5f;
+
         foreach (Bubble_level bubble in bubbles)
         {
             GameObject bubbleTemplate;
             Vector2 pos;
             if (bubble.id == 100)
             {
-                pos = new Vector2(-screenSize.x / 2 + GameDefine.SIZE_BUBBLE.x * 0.95f + bubble.x, screenSize.y * 0.512f - bubble.y * GameDefine.HEIGHT_ROW);
+                pos = new Vector2(-screenSize.x / 2 + GameDefine.SIZE_BUBBLE.x * 0.95f + bubble.x, screenSize.y * 0.5f - bubble.y * GameDefine.HEIGHT_ROW);
                 bubbleMaps[bubble.y][bubble.x].location = pos;
                 bubbleMaps[bubble.y][bubble.x].is_exist = true;
                 if (bubble.x == 0)
                 {
-                    GameObject topBar = Instantiate(top_bar, new Vector2(0f, screenSize.y * 0.5f), Quaternion.identity, this.transform);
+                    GameObject topBar = Instantiate(top_bar, new Vector3(0f, screenSize.y * 0.5f, 0f), Quaternion.identity, this.transform);
                     bubbleMaps[bubble.y][bubble.x].bubble = topBar;
                 }
             }
             if (bubble.id < 8)
             {
-                float y = screenSize.y * 0.512f - bubble.y * GameDefine.HEIGHT_ROW;
-                // Debug.Log(y);
+                float y = constant - bubble.y * GameDefine.HEIGHT_ROW;
                 bubbleTemplate = listBubbles[bubble.id];
                 if (bubble.y % 2 == 0)
                     pos = new Vector2(-screenSize.x / 2 + GameDefine.SIZE_BUBBLE.x * 0.95f + bubble.x, y);
@@ -81,13 +82,15 @@ public class BubbleController : MonoBehaviour
     }
     private void Move()
     {
-        float dow = rowBubbleHide <= 3 ? rowBubbleHide : 3 + (rowBubbleHide - 3) * GameDefine.HEIGHT_ROW;
+        // float dow = rowBubbleHide <= 3 ? rowBubbleHide : 3 + (rowBubbleHide - 3) * GameDefine.HEIGHT_ROW;
+        // Debug.Log(dow);
         if (rowDefault > 11)
         {
-            transform.DOMoveY(-2 + dow, 1).SetDelay(1);
+            transform.DOMoveY((rowBubbleHide - 1) * GameDefine.HEIGHT_ROW, 1).SetDelay(1);
         }
     }
-    public Vector3 getPosition(){
+    public Vector3 getPosition()
+    {
         // Debug.Log(transform.position);
         return transform.position;
     }

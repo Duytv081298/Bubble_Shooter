@@ -8,5 +8,5 @@ public class GameDefine
     
     public static float HEIGHT_ROW = 0.87f;
     public static float TIME_CHANGE_PLAYER = 0.5f;
-    public static Vector2 SIZE_TOP_BAR = new Vector2(14.44f, 0.2319815f);
+    public static Vector2 SIZE_TOP_BAR = new Vector2(14.44f, 0.19f);
 }

@@ -46,7 +46,7 @@ public class GameController : MonoBehaviour
     {
         Level level = gameHandler.getLevel();
         this.rowDefault = gameHandler.getRowDefault();
-        this.rowBubbleHide = this.rowDefault - 11;
+        this.rowBubbleHide = this.rowDefault - 12;
         Debug.Log("rowDefault: " + this.rowDefault);
         Debug.Log("rowBubbleHide: " + rowBubbleHide);
         SpawbBubbleMaps();
@@ -81,56 +81,45 @@ public class GameController : MonoBehaviour
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 mousePosition = new Vector2(mousePos.x, mousePos.y);
 
-        // if (Input.GetMouseButton(0))
-        // {
-        //     if (HasMouseMoved() && mousePosition.y > playerPos.y + 0.5)
-        //     {
-        //         listId = playerController.getId();
-        //         lineController.setIdDot(listId[0]);
-        //         lineController.setBubbleMaps(bubbleMaps);
-        //         listPosPlayerMove = lineController.DrawPoints(mousePosition);
-        //     }
-        //     else if (mousePosition.y < playerPos.y + 0.5)
-        //     {
-        //         lineController.DestroyAllDots();
-        //     }
-        //     else lineController.MoveDots();
-        // }
+        if (Input.GetMouseButton(0))
+        {
+            if (HasMouseMoved() && mousePosition.y > playerPos.y + 0.5)
+            {
+                listId = playerController.getId();
+                lineController.setIdDot(listId[0]);
+                lineController.setBubbleMaps(bubbleMaps);
+                listPosPlayerMove = lineController.DrawPoints(mousePosition);
+            }
+            else if (mousePosition.y < playerPos.y + 0.5)
+            {
+                lineController.DestroyAllDots();
+            }
+            else lineController.MoveDots();
+        }
 
         if (Input.GetMouseButtonDown(0))
         {
-            // if (mousePosition.y > playerPos.y + 0.5 && playerController.isRun())
-            // {
-            //     listId = playerController.getId();
-            //     lineController.setIdDot(listId[0]);
-            //     listPosPlayerMove = lineController.DrawPoints(mousePosition);
-            // }
-            // else if (playerController.isRotate() && playerController.isRun())
-            // {
-            //     lineController.DestroyAllDots();
-            //     changPlayer();
-            // }
-            Vector2Int index = LocationToIndex(mousePosition);
-            Debug.Log("index: " + index);
-            // Debug.Log(bubbleMaps[index.y].Count);
-            Debug.Log(JsonUtility.ToJson(bubbleMaps[index.y][index.x]));
-
-            Vector2 loc = IndexToLocation(index);
-            Debug.Log(loc);
-            Debug.Log(loc.x);
-            Debug.Log(loc.y);
-
+            if (mousePosition.y > playerPos.y + 0.5 && playerController.isRun())
+            {
+                listId = playerController.getId();
+                lineController.setIdDot(listId[0]);
+                lineController.setBubbleMaps(bubbleMaps);
+                listPosPlayerMove = lineController.DrawPoints(mousePosition);
+            }
+            else if (playerController.isRotate() && playerController.isRun())
+            {
+                lineController.DestroyAllDots();
+                changPlayer();
+            }
         }
-        // if (Input.GetMouseButtonUp(0))
-        // {
-        //     if (mousePosition.y > playerPos.y + 0.5 && playerController.isRun())
-        //     {
-        //         StartCoroutine(MovePlayer());
-        //     }
-        //     lineController.DestroyAllDots();
-        // }
-
-
+        if (Input.GetMouseButtonUp(0))
+        {
+            if (mousePosition.y > playerPos.y + 0.5 && playerController.isRun())
+            {
+                StartCoroutine(MovePlayer());
+            }
+            lineController.DestroyAllDots();
+        }
         // if (this.player)
         // {
         //     this.player.transform.position = new Vector3(mousePos.x, mousePos.y, -0.0001f);
@@ -152,7 +141,6 @@ public class GameController : MonoBehaviour
     {
         Vector2 lastPos = listPosPlayerMove[listPosPlayerMove.Count - 1];
         Vector2Int index = LocationToIndex(lastPos);
-        Debug.Log(index);
         Vector2 location = IndexToLocation(index);
 
         listPosPlayerMove.RemoveAt(listPosPlayerMove.Count - 1);
@@ -274,25 +262,43 @@ public class GameController : MonoBehaviour
     private Vector2Int LocationToIndex(Vector2 mousePos)
     {
         int count_Row_0 = 0;
-        if (rowBubbleHide >= 1) count_Row_0 = bubbleMaps[rowBubbleHide - 1].Count;
-        else count_Row_0 = bubbleMaps[0].Count;
+        if (rowBubbleHide >= 1) count_Row_0 = bubbleMaps[rowBubbleHide].Count;
+        else count_Row_0 = bubbleMaps[1].Count;
 
+        float constant = screenSize.y * 0.5f - GameDefine.SIZE_TOP_BAR.y * 0.8f;
+        if (rowBubbleHide > 0) constant = screenSize.y * 0.5f - GameDefine.SIZE_TOP_BAR.y * 0.8f;
+        else if (rowBubbleHide == 0) constant -= GameDefine.HEIGHT_ROW;
+        else constant -= 2;
 
-
-        float posy = rowBubbleHide <= 1 ? mousePos.y + GameDefine.SIZE_TOP_BAR.y : mousePos.y;
         float x = 0;
-        float y = Mathf.Floor((screenSize.y * 0.495f - posy) / GameDefine.HEIGHT_ROW);
+        float y = Mathf.Floor((constant - mousePos.y) / GameDefine.HEIGHT_ROW);
         if (count_Row_0 == 11)
         {
-            if (y % 2 == 0)
+            if (rowBubbleHide == 0)
             {
-                x = Mathf.Floor(mousePos.x + screenSize.x * 0.5f);
-                if (x > 10) x = 10;
+                if (y % 2 == 0)
+                {
+                    x = Mathf.Floor(mousePos.x + screenSize.x * 0.5f - GameDefine.SIZE_BUBBLE.x * 0.45f);
+                    if (x > 9) x = 9;
+                }
+                else
+                {
+                    x = Mathf.Floor(mousePos.x + screenSize.x * 0.5f);
+                    if (x > 10) x = 10;
+                }
             }
             else
             {
-                x = Mathf.Floor(mousePos.x + screenSize.x * 0.5f - GameDefine.SIZE_BUBBLE.x * 0.45f);
-                if (x > 9) x = 9;
+                if (y % 2 == 0)
+                {
+                    x = Mathf.Floor(mousePos.x + screenSize.x * 0.5f);
+                    if (x > 10) x = 10;
+                }
+                else
+                {
+                    x = Mathf.Floor(mousePos.x + screenSize.x * 0.5f - GameDefine.SIZE_BUBBLE.x * 0.45f);
+                    if (x > 9) x = 9;
+                }
             }
         }
         else
@@ -309,27 +315,17 @@ public class GameController : MonoBehaviour
             }
         }
 
-        if (rowBubbleHide == 1) y -= rowBubbleHide;
-        else if (rowBubbleHide <= 0) y -= 2;
         if (x < 0) x = 0;
-        y += (rowBubbleHide - 1);
         if (y < 0) y = 0;
-
+        y += 1;
+        if (rowBubbleHide > 0) y += (rowBubbleHide - 1);
         return new Vector2Int((int)x, (int)y);
     }
     private Vector2 IndexToLocation(Vector2Int index)
     {
 
-        int count_Row_0 = 0;
-        if (rowBubbleHide >= 1) count_Row_0 = bubbleMaps[rowBubbleHide - 1].Count;
-        else count_Row_0 = bubbleMaps[0].Count;
-        float y = screenSize.y * 0.512f - index.y * GameDefine.HEIGHT_ROW;
-        // if (rowBubbleHide <= 1) y -= GameDefine.HEIGHT_ROW*(2-rowBubbleHide);
-        // if (rowBubbleHide == 0) y -= GameDefine.HEIGHT_ROW *2;
-        // if (rowBubbleHide == 0) y -= GameDefine.HEIGHT_ROW *2;
-        Debug.Log("0: " + screenSize.y * 0.512f );
-        Debug.Log("2-rowBubbleHide: " + (float)(2-rowBubbleHide));
-        Debug.Log(y);
+        float constant = screenSize.y * 0.5f - GameDefine.SIZE_TOP_BAR.y + GameDefine.HEIGHT_ROW * 0.5f;
+        float y = constant - index.y * GameDefine.HEIGHT_ROW;
         Vector2 pos;
         if (index.y % 2 == 0)
             pos = new Vector2(-screenSize.x / 2 + GameDefine.SIZE_BUBBLE.x * 0.95f + index.x, y);

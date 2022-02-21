@@ -19,6 +19,29 @@ public class LineController : MonoBehaviour
     public void setBubbleMaps(List<List<BubbleMaps>> bubbleMaps)
     {
         this.bubbleMaps = bubbleMaps;
+        // string total = "[";
+        // foreach (var item in bubbleMaps)
+        // {
+        //     foreach (var item1 in item)
+        //     {
+        //         // total += JsonUtility.ToJson(item1);
+        //         // total += JsonUtility.ToJson(item1).ToString() + "," ;
+        //         total += item1.ToString();
+        //     }
+
+        // }
+        // for (int i = 0; i < bubbleMaps.Count; i++)
+        // {
+        //     var row = bubbleMaps[i];
+        //     for (int j = 0; j < row.Count; j++)
+        //     {
+        //         total += JsonUtility.ToJson(row[j]).ToString() + "," ;
+        //         Debug.Log("x: "+ i+ "y: " + j);
+        //     }
+            
+        // }
+        // total +="]";
+        // Debug.Log(total);
     }
     public void setIdDot(int idDot)
     {
