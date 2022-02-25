@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-    [SerializeField] private GameHandler gameHandler;
-
     private int rowDefault;
     private int rowBubbleHide;
     private Vector2 screenSize;
@@ -14,11 +12,11 @@ public class GameController : MonoBehaviour
     private Vector2 playerPos;
     private List<List<BubbleMaps>> bubbleMaps = new List<List<BubbleMaps>>();
     private List<Vector3> listPosPlayerMove = new List<Vector3>();
+    [SerializeField] private GameHandler gameHandler;
     [SerializeField] private BubbleController bubbleController;
     [SerializeField] private PlayerController playerController;
     [SerializeField] private LineController lineController;
-    private Vector2 mousePosMemory;
-    [SerializeField] private float speed;
+    [SerializeField] private Event EventController;
 
     private void Awake()
     {
@@ -30,7 +28,7 @@ public class GameController : MonoBehaviour
     }
     public void SpawbBubbleMaps()
     {
-        for (int i = 0; i <= this.rowDefault + 1; i++)
+        for (int i = 0; i <= this.rowDefault + 3; i++)
         {
             int length = i % 2 != 0 || i == 0 ? 11 : 10;
             List<BubbleMaps> temp = new List<BubbleMaps>();
@@ -44,6 +42,13 @@ public class GameController : MonoBehaviour
     }
     void Start()
     {
+        // StartCoroutine();
+        Init();
+        // Debug.Log(JsonUtility.ToJson(gameHandler.getLevel()));
+    }
+    private void Init()
+
+    {
         Level level = gameHandler.getLevel();
         this.rowDefault = gameHandler.getRowDefault();
         this.rowBubbleHide = this.rowDefault - 12;
@@ -52,17 +57,16 @@ public class GameController : MonoBehaviour
         SpawbBubbleMaps();
 
         bubbleController.SetUp(screenSize, bubbleMaps, rowDefault);
-        bubbleMaps = bubbleController.setPosition(level.bubbles);
-        // Debug.Log(bubbleController.getMaxRow());
+        bubbleController.setPosition(level.bubbles);
 
+        playerController.SetUp(bubbleController.GetListIdPlayer());
         playerController.SetPlayer(screenSize);
+        bubbleMaps = bubbleController.getBubbleMaps();
         listId = playerController.getId();
         listPlayer = playerController.getPlayer();
         playerPos = listPlayer[0].transform.position;
 
-        lineController.SetUp(playerPos, screenSize, bubbleMaps);
-
-        // Debug.Log(JsonUtility.ToJson(gameHandler.getLevel()));
+        lineController.SetUp(playerPos, screenSize, bubbleMaps, rowBubbleHide);
     }
     public void nextLevel()
     {
@@ -80,51 +84,64 @@ public class GameController : MonoBehaviour
     {
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 mousePosition = new Vector2(mousePos.x, mousePos.y);
-
-        if (Input.GetMouseButton(0))
+        if (bubbleController.isPlay())
         {
-            if (HasMouseMoved() && mousePosition.y > playerPos.y + 0.5)
+            if (Input.GetMouseButton(0))
             {
-                listId = playerController.getId();
-                lineController.setIdDot(listId[0]);
-                lineController.setBubbleMaps(bubbleMaps);
-                listPosPlayerMove = lineController.DrawPoints(mousePosition);
+                if (HasMouseMoved() && mousePosition.y > playerPos.y + 0.5)
+                    DrawLine(mousePosition);
+                else if (mousePosition.y < playerPos.y + 0.5)
+                {
+                    RemoveLine();
+                }
+                else lineController.MoveDots();
             }
-            else if (mousePosition.y < playerPos.y + 0.5)
+
+            if (Input.GetMouseButtonDown(0))
             {
-                lineController.DestroyAllDots();
+                if (mousePosition.y > playerPos.y + 0.5 && playerController.isRun())
+                    DrawLine(mousePosition);
+                else if (playerController.isRotate() && playerController.isRun())
+                {
+                    RemoveLine();
+                    changPlayer();
+                }
             }
-            else lineController.MoveDots();
+            if (Input.GetMouseButtonUp(0))
+            {
+                if (mousePosition.y > playerPos.y + 0.5 && playerController.isRun())
+                {
+                    StartCoroutine(MovePlayer());
+                }
+                RemoveLine();
+            }
+        }
+        else
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                var index = bubbleController.LocationToIndex(mousePosition);
+                Debug.Log("index: " + index);
+            }
         }
 
-        if (Input.GetMouseButtonDown(0))
-        {
-            if (mousePosition.y > playerPos.y + 0.5 && playerController.isRun())
-            {
-                listId = playerController.getId();
-                lineController.setIdDot(listId[0]);
-                lineController.setBubbleMaps(bubbleMaps);
-                listPosPlayerMove = lineController.DrawPoints(mousePosition);
-            }
-            else if (playerController.isRotate() && playerController.isRun())
-            {
-                lineController.DestroyAllDots();
-                changPlayer();
-            }
-        }
-        if (Input.GetMouseButtonUp(0))
-        {
-            if (mousePosition.y > playerPos.y + 0.5 && playerController.isRun())
-            {
-                StartCoroutine(MovePlayer());
-            }
-            lineController.DestroyAllDots();
-        }
-        // if (this.player)
-        // {
-        //     this.player.transform.position = new Vector3(mousePos.x, mousePos.y, -0.0001f);
-        // }
 
+    }
+
+    public void Test()
+    {
+        Debug.Log("kích hoạt FG");
+    }
+    void DrawLine(Vector2 mousePosition)
+    {
+        listId = playerController.getId();
+        rowBubbleHide = bubbleController.getRowBubbleHide();
+        lineController.SetStart(listId[0], bubbleMaps, rowBubbleHide);
+        listPosPlayerMove = lineController.DrawPoints(mousePosition);
+    }
+    void RemoveLine()
+    {
+        lineController.DestroyAllDots();
     }
     bool HasMouseMoved()
     {
@@ -139,200 +156,23 @@ public class GameController : MonoBehaviour
     }
     private IEnumerator MovePlayer()
     {
-        Vector2 lastPos = listPosPlayerMove[listPosPlayerMove.Count - 1];
-        Vector2Int index = LocationToIndex(lastPos);
-        Vector2 location = IndexToLocation(index);
+        listPosPlayerMove = bubbleController.StandardizePosition(listPosPlayerMove, listPlayer[0]);
 
-        listPosPlayerMove.RemoveAt(listPosPlayerMove.Count - 1);
-        listPosPlayerMove.Add(location);
-
-        Vector2[] listDistance = new Vector2[listPosPlayerMove.Count];
-        float total = 0f;
-        for (int i = 0; i < listPosPlayerMove.Count; i++)
-        {
-            float temp = i == 0 ? Vector2.Distance(playerPos, listPosPlayerMove[i]) / speed : Vector2.Distance(listPosPlayerMove[i - 1], listPosPlayerMove[i]) / speed;
-            listDistance[i] = new Vector2(temp, total);
-            total += temp;
-        }
-        bubbleMaps[index.y][index.x].bubble = listPlayer[0];
-        bubbleMaps[index.y][index.x].location = location;
-        bubbleMaps[index.y][index.x].is_exist = true;
-        bubbleMaps[index.y][index.x].color = listPlayer[0].tag;
-        playerController.Move(listPosPlayerMove, listDistance);
-        yield return new WaitForSeconds(total);
-        PlayerMoveEnd(index, listPlayer[0].tag);
-
+        yield return StartCoroutine(playerController.Move(listPosPlayerMove));
+        StartCoroutine(PlayerMoveEnd());
     }
-    private void PlayerMoveEnd(Vector2Int index, string color)
+    private IEnumerator PlayerMoveEnd()
     {
-        List<Vector2Int> listBoom = new List<Vector2Int>();
-        bubbleMaps[index.y][index.x].is_check = true;
-        listBoom.Add(index);
-        List<Vector2Int> booms = CheckBoom(index, color);
-        listBoom.AddRange(booms);
-        while (booms.Count > 0)
-        {
-            List<Vector2Int> temp = new List<Vector2Int>();
-            for (int i = 0; i < booms.Count; i++)
-            {
-                temp.AddRange(CheckBoom(booms[i], color));
-            }
-            booms = temp;
-            listBoom.AddRange(booms);
-        }
-        if (listBoom.Count > 1)
-        {
-            foreach (var item in listBoom)
-            {
-                RemoveBubble(item);
-            }
-        }
-        TurnOffCheck();
+        bubbleController.setPlay(false);
+        yield return StartCoroutine(bubbleController.MergedIntoPlayer());
+        playerController.SetUp(bubbleController.GetListIdPlayer());
+        // StartCoroutine(RemoBubbleDisconnect());
     }
-    private void RemoveBubble(Vector2Int index)
-    {
-        Destroy(bubbleMaps[index.y][index.x].bubble);
-        bubbleMaps[index.y][index.x].bubble = null;
-        bubbleMaps[index.y][index.x].location = Vector2.zero;
-        bubbleMaps[index.y][index.x].is_exist = false;
-        bubbleMaps[index.y][index.x].color = null;
-        bubbleMaps[index.y][index.x].is_check = false;
-        bubbleMaps[index.y][index.x].is_active = false;
-
-    }
-    private void TurnOffCheck()
-    {
-        for (int y = 0; y < bubbleMaps.Count; y++)
-        {
-            var temp = bubbleMaps[y];
-            for (int x = 0; x < temp.Count; x++)
-            {
-                bubbleMaps[y][x].is_check = false;
-            }
-        }
-    }
-    private List<Vector2Int> CheckBoom(Vector2Int index, string color)
-    {
-        List<Vector2Int> listBoom = new List<Vector2Int>();
-        Vector2 location = IndexToLocation(index);
-        Vector2Int TL = LocationToIndex(new Vector2(location.x - GameDefine.SIZE_BUBBLE.x * 0.25f, location.y + GameDefine.SIZE_BUBBLE.y * 0.6f));
-        Vector2Int TR = LocationToIndex(new Vector2(location.x + GameDefine.SIZE_BUBBLE.x * 0.25f, location.y + GameDefine.SIZE_BUBBLE.y * 0.6f));
-        Vector2Int L = LocationToIndex(new Vector2(location.x - GameDefine.SIZE_BUBBLE.x * 0.6f, location.y));
-        Vector2Int R = LocationToIndex(new Vector2(location.x + GameDefine.SIZE_BUBBLE.x * 0.6f, location.y));
-        Vector2Int BL = LocationToIndex(new Vector2(location.x - GameDefine.SIZE_BUBBLE.x * 0.25f, location.y - GameDefine.SIZE_BUBBLE.y * 0.6f));
-        Vector2Int BR = LocationToIndex(new Vector2(location.x + GameDefine.SIZE_BUBBLE.x * 0.25f, location.y - GameDefine.SIZE_BUBBLE.y * 0.6f));
-        if (bubbleMaps[TL.y][TL.x].is_exist && !bubbleMaps[TL.y][TL.x].is_check)
-        {
-            bubbleMaps[TL.y][TL.x].is_check = true;
-            if (bubbleMaps[TL.y][TL.x].color == color) listBoom.Add(TL);
-            // listBoom.Add(TL);
-        }
-        if (bubbleMaps[TR.y][TR.x].is_exist && !bubbleMaps[TR.y][TR.x].is_check)
-        {
-            bubbleMaps[TR.y][TR.x].is_check = true;
-            if (bubbleMaps[TR.y][TR.x].color == color) listBoom.Add(TR);
-            // listBoom.Add(TR);
-        }
-        if (bubbleMaps[L.y][L.x].is_exist && !bubbleMaps[L.y][L.x].is_check)
-        {
-            bubbleMaps[L.y][L.x].is_check = true;
-            if (bubbleMaps[L.y][L.x].color == color) listBoom.Add(L);
-            // listBoom.Add(L);
-        }
-        if (bubbleMaps[R.y][R.x].is_exist && !bubbleMaps[R.y][R.x].is_check)
-        {
-            bubbleMaps[R.y][R.x].is_check = true;
-            if (bubbleMaps[R.y][R.x].color == color) listBoom.Add(R);
-            // listBoom.Add(R);
-        }
-        if (bubbleMaps[BL.y][BL.x].is_exist && !bubbleMaps[BL.y][BL.x].is_check)
-        {
-            bubbleMaps[BL.y][BL.x].is_check = true;
-            if (bubbleMaps[BL.y][BL.x].color == color) listBoom.Add(BL);
-            //  listBoom.Add(BL);
-        }
-        if (bubbleMaps[BR.y][BR.x].is_exist && !bubbleMaps[BR.y][BR.x].is_check)
-        {
-            bubbleMaps[BR.y][BR.x].is_check = true;
-            if (bubbleMaps[BR.y][BR.x].color == color) listBoom.Add(BR);
-            // listBoom.Add(BR);
-        }
-        return listBoom;
-    }
-    private Vector2Int LocationToIndex(Vector2 mousePos)
-    {
-        int count_Row_0 = 0;
-        if (rowBubbleHide >= 1) count_Row_0 = bubbleMaps[rowBubbleHide].Count;
-        else count_Row_0 = bubbleMaps[1].Count;
-
-        float constant = screenSize.y * 0.5f - GameDefine.SIZE_TOP_BAR.y * 0.8f;
-        if (rowBubbleHide > 0) constant = screenSize.y * 0.5f - GameDefine.SIZE_TOP_BAR.y * 0.8f;
-        else if (rowBubbleHide == 0) constant -= GameDefine.HEIGHT_ROW;
-        else constant -= 2;
-
-        float x = 0;
-        float y = Mathf.Floor((constant - mousePos.y) / GameDefine.HEIGHT_ROW);
-        if (count_Row_0 == 11)
-        {
-            if (rowBubbleHide == 0)
-            {
-                if (y % 2 == 0)
-                {
-                    x = Mathf.Floor(mousePos.x + screenSize.x * 0.5f - GameDefine.SIZE_BUBBLE.x * 0.45f);
-                    if (x > 9) x = 9;
-                }
-                else
-                {
-                    x = Mathf.Floor(mousePos.x + screenSize.x * 0.5f);
-                    if (x > 10) x = 10;
-                }
-            }
-            else
-            {
-                if (y % 2 == 0)
-                {
-                    x = Mathf.Floor(mousePos.x + screenSize.x * 0.5f);
-                    if (x > 10) x = 10;
-                }
-                else
-                {
-                    x = Mathf.Floor(mousePos.x + screenSize.x * 0.5f - GameDefine.SIZE_BUBBLE.x * 0.45f);
-                    if (x > 9) x = 9;
-                }
-            }
-        }
-        else
-        {
-            if (y % 2 == 0)
-            {
-                x = Mathf.Floor(mousePos.x + screenSize.x * 0.5f - GameDefine.SIZE_BUBBLE.x * 0.45f);
-                if (x > 9) x = 9;
-            }
-            else
-            {
-                x = Mathf.Floor(mousePos.x + screenSize.x * 0.5f);
-                if (x > 10) x = 10;
-            }
-        }
-
-        if (x < 0) x = 0;
-        if (y < 0) y = 0;
-        y += 1;
-        if (rowBubbleHide > 0) y += (rowBubbleHide - 1);
-        return new Vector2Int((int)x, (int)y);
-    }
-    private Vector2 IndexToLocation(Vector2Int index)
-    {
-
-        float constant = screenSize.y * 0.5f - GameDefine.SIZE_TOP_BAR.y + GameDefine.HEIGHT_ROW * 0.5f;
-        float y = constant - index.y * GameDefine.HEIGHT_ROW;
-        Vector2 pos;
-        if (index.y % 2 == 0)
-            pos = new Vector2(-screenSize.x / 2 + GameDefine.SIZE_BUBBLE.x * 0.95f + index.x, y);
-        else
-            pos = new Vector2(-screenSize.x / 2 + GameDefine.SIZE_BUBBLE.x / 2 + index.x, y);
-
-        return pos;
-    }
+    // private IEnumerator RemoBubbleDisconnect()
+    // {
+    //     List<Vector2Int> listDisconnect = bubbleController.GetBubbleDisconnect();
+    //     Debug.Log(listDisconnect.Count);
+    //     yield return StartCoroutine(bubbleController.RemoveBubbleDisconnect(listDisconnect));
+    // }
 
 }

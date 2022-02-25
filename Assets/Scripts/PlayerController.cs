@@ -17,11 +17,14 @@ public class PlayerController : MonoBehaviour
     private Vector2 screenSize;
     private GameObject player;
     private int[] listId = new int[2];
+    [SerializeField] private float speed;
+    private float totalTimeMove = 0f;
 
     [SerializeField] private Transform playerMain;
     [SerializeField] private Transform playerExtra;
-    [SerializeField] private Transform bubbleControllerTransform;
     List<Vector3> listPosPlayerMove = new List<Vector3>();
+
+    private List<int> ListIdUse;
 
     private bool rotate = true;
     private bool run = true;
@@ -41,13 +44,16 @@ public class PlayerController : MonoBehaviour
     {
         return this.listPlayer;
     }
+
+    public void SetUp(List<int> ListIdUse)
+    {
+        this.ListIdUse = ListIdUse;
+    }
     public void SetPlayer(Vector2 screenSize)
     {
         this.screenSize = screenSize;
-        listId[0] = Random.Range(0, listBubbles.Length);
-        listId[1] = Random.Range(0, listBubbles.Length);
-        listId[0] = Random.Range(1, 5);
-        listId[1] = Random.Range(1, 5);
+        listId[0] = this.ListIdUse[Random.Range(0, this.ListIdUse.Count)];
+        listId[1] = this.ListIdUse[Random.Range(0, this.ListIdUse.Count)];
         playerPos = new Vector3(0f, -screenSize.y * 0.255f, -0.0001f);
         temPos = new Vector3(0.78f, -screenSize.y * 0.337f, -0.0001f);
         this.listPlayer[0] = Instantiate(listBubbles[listId[0]], playerPos, Quaternion.identity, playerMain);
@@ -65,25 +71,16 @@ public class PlayerController : MonoBehaviour
             System.Array.Reverse(listId);
 
             listPlayer[0].transform.SetParent(playerMain);
-            if (listPlayer[1])
-            {
-                listPlayer[1].transform.SetParent(bubbleControllerTransform);
-                Collider2D col = listPlayer[1].GetComponent<Collider2D>();
-                col.enabled = true;
-            }
+
             PlayerHalo.DestroyHalo();
             PlayerHalo.SpawbHola(listId[0], playerPos.x, playerPos.y);
 
-            listId[1] = Random.Range(0, listBubbles.Length);
-            listId[1] = Random.Range(1,5);
+            listId[1] = this.ListIdUse[Random.Range(0, this.ListIdUse.Count)];
             this.listPlayer[1] = Instantiate(listBubbles[listId[1]], temPos, Quaternion.identity, playerExtra);
 
             player = this.listPlayer[0];
             run = true;
         });
-
-
-
     }
     public void ChangePlayer()
     {
@@ -106,21 +103,21 @@ public class PlayerController : MonoBehaviour
         player = this.listPlayer[0];
         rotate = true;
     }
-    public void Move(List<Vector3> listPos, Vector2[] time)
+    public IEnumerator Move(List<Vector3> listPos)
     {
+        Vector2[] timeMove = GetTimeMove(listPos);
         run = false;
         listPosPlayerMove = listPos;
         for (int i = 0; i < listPos.Count; i++)
         {
-
             if (i == listPos.Count - 1)
-                LeanTween.move(player, listPos[i], time[i].x)
-                       .setDelay(time[i].y)
+                LeanTween.move(player, listPos[i], timeMove[i].x)
+                       .setDelay(timeMove[i].y)
                        .setEase(LeanTweenType.linear)
                        .setOnComplete(MoveEnd);
             else
-                LeanTween.move(player, listPos[i], time[i].x)
-                       .setDelay(time[i].y)
+                LeanTween.move(player, listPos[i], timeMove[i].x)
+                       .setDelay(timeMove[i].y)
                        .setEase(LeanTweenType.linear);
         }
         // Sequence sequence = DOTween.Sequence();
@@ -129,5 +126,19 @@ public class PlayerController : MonoBehaviour
         //     sequence.Append(player.transform.DOMove(listPos[i], time[i].x));
         // }
         // sequence.AppendCallback(MoveEnd);
+        yield return new WaitForSeconds(totalTimeMove);
+    }
+    public Vector2[] GetTimeMove(List<Vector3> listPos)
+    {
+        Vector2[] listTime = new Vector2[listPos.Count];
+        float totalTime = 0f;
+        for (int i = 0; i < listPos.Count; i++)
+        {
+            float temp = i == 0 ? Vector2.Distance(playerPos, listPos[i]) / speed : Vector2.Distance(listPos[i - 1], listPos[i]) / speed;
+            listTime[i] = new Vector2(temp, totalTime);
+            totalTime += temp;
+        }
+        totalTimeMove = totalTime;
+        return listTime;
     }
 }

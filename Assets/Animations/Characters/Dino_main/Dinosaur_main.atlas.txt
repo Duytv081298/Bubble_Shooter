@@ -1,0 +1,272 @@
+
+Dinosaur_main.png
+size: 1024,1024
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+10bong
+  rotate: false
+  xy: 521, 690
+  size: 236, 331
+  orig: 236, 331
+  offset: 0, 0
+  index: -1
+B_Yellow
+  rotate: false
+  xy: 467, 149
+  size: 83, 83
+  orig: 83, 83
+  offset: 0, 0
+  index: -1
+body
+  rotate: false
+  xy: 2, 421
+  size: 517, 600
+  orig: 517, 600
+  offset: 0, 0
+  index: -1
+eye_left1
+  rotate: false
+  xy: 472, 46
+  size: 87, 101
+  orig: 87, 101
+  offset: 0, 0
+  index: -1
+eye_left2
+  rotate: false
+  xy: 782, 118
+  size: 38, 41
+  orig: 38, 41
+  offset: 0, 0
+  index: -1
+eye_right1
+  rotate: false
+  xy: 948, 442
+  size: 57, 86
+  orig: 57, 86
+  offset: 0, 0
+  index: -1
+eye_right2
+  rotate: true
+  xy: 521, 421
+  size: 27, 35
+  orig: 27, 35
+  offset: 0, 0
+  index: -1
+eyeleft_closed1
+  rotate: false
+  xy: 2, 2
+  size: 70, 55
+  orig: 70, 55
+  offset: 0, 0
+  index: -1
+eyeleft_closed2
+  rotate: false
+  xy: 74, 5
+  size: 72, 52
+  orig: 72, 52
+  offset: 0, 0
+  index: -1
+eyeleft_closed3
+  rotate: false
+  xy: 222, 17
+  size: 66, 40
+  orig: 66, 40
+  offset: 0, 0
+  index: -1
+eyeleft_smile1
+  rotate: true
+  xy: 948, 530
+  size: 72, 74
+  orig: 72, 74
+  offset: 0, 0
+  index: -1
+eyeleft_smile2
+  rotate: false
+  xy: 148, 15
+  size: 72, 42
+  orig: 72, 42
+  offset: 0, 0
+  index: -1
+eyeright_closed1
+  rotate: false
+  xy: 427, 25
+  size: 39, 32
+  orig: 39, 32
+  offset: 0, 0
+  index: -1
+eyeright_closed2
+  rotate: false
+  xy: 948, 396
+  size: 47, 44
+  orig: 47, 44
+  offset: 0, 0
+  index: -1
+eyeright_closed3
+  rotate: false
+  xy: 339, 22
+  size: 42, 35
+  orig: 42, 35
+  offset: 0, 0
+  index: -1
+eyeright_smile1
+  rotate: false
+  xy: 733, 100
+  size: 47, 59
+  orig: 47, 59
+  offset: 0, 0
+  index: -1
+eyeright_smile2
+  rotate: false
+  xy: 383, 22
+  size: 42, 35
+  orig: 42, 35
+  offset: 0, 0
+  index: -1
+front_leg
+  rotate: true
+  xy: 767, 400
+  size: 158, 179
+  orig: 158, 179
+  offset: 0, 0
+  index: -1
+glass
+  rotate: true
+  xy: 932, 604
+  size: 140, 82
+  orig: 140, 82
+  offset: 0, 0
+  index: -1
+glass2
+  rotate: true
+  xy: 290, 21
+  size: 36, 47
+  orig: 36, 47
+  offset: 0, 0
+  index: -1
+hand_back
+  rotate: true
+  xy: 558, 287
+  size: 161, 128
+  orig: 161, 128
+  offset: 0, 0
+  index: -1
+hand_front
+  rotate: false
+  xy: 309, 181
+  size: 156, 238
+  orig: 156, 238
+  offset: 0, 0
+  index: -1
+hand_front2
+  rotate: false
+  xy: 521, 450
+  size: 150, 238
+  orig: 150, 238
+  offset: 0, 0
+  index: -1
+hat_noel
+  rotate: true
+  xy: 759, 746
+  size: 275, 239
+  orig: 275, 239
+  offset: 0, 0
+  index: -1
+head
+  rotate: false
+  xy: 2, 149
+  size: 305, 270
+  orig: 305, 270
+  offset: 0, 0
+  index: -1
+head2
+  rotate: false
+  xy: 561, 105
+  size: 98, 87
+  orig: 98, 87
+  offset: 0, 0
+  index: -1
+khan1
+  rotate: false
+  xy: 683, 161
+  size: 137, 92
+  orig: 137, 92
+  offset: 0, 0
+  index: -1
+khan2
+  rotate: true
+  xy: 558, 194
+  size: 91, 123
+  orig: 91, 123
+  offset: 0, 0
+  index: -1
+khan3
+  rotate: true
+  xy: 661, 91
+  size: 68, 70
+  orig: 68, 70
+  offset: 0, 0
+  index: -1
+leg_back
+  rotate: false
+  xy: 767, 560
+  size: 163, 184
+  orig: 163, 184
+  offset: 0, 0
+  index: -1
+mouth1
+  rotate: true
+  xy: 467, 234
+  size: 185, 89
+  orig: 185, 89
+  offset: 0, 0
+  index: -1
+mouth2
+  rotate: false
+  xy: 688, 255
+  size: 154, 143
+  orig: 154, 143
+  offset: 0, 0
+  index: -1
+sad
+  rotate: true
+  xy: 673, 466
+  size: 222, 92
+  orig: 222, 92
+  offset: 0, 0
+  index: -1
+shadow
+  rotate: false
+  xy: 2, 59
+  size: 468, 88
+  orig: 468, 88
+  offset: 0, 0
+  index: -1
+smoke03
+  rotate: true
+  xy: 561, 27
+  size: 76, 81
+  orig: 76, 81
+  offset: 0, 0
+  index: -1
+tear1
+  rotate: true
+  xy: 1000, 974
+  size: 47, 20
+  orig: 47, 20
+  offset: 0, 0
+  index: -1
+tear2
+  rotate: true
+  xy: 309, 156
+  size: 23, 32
+  orig: 23, 32
+  offset: 0, 0
+  index: -1
+tongue
+  rotate: false
+  xy: 844, 259
+  size: 101, 139
+  orig: 101, 139
+  offset: 0, 0
+  index: -1

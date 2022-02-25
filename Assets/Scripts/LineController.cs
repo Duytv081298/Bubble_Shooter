@@ -5,6 +5,7 @@ using UnityEngine;
 public class LineController : MonoBehaviour
 {
     private Vector2 screenSize;
+    private int rowBubbleHide;
     Vector2 start;
 
     [Range(0.1f, 20f)]
@@ -16,42 +17,19 @@ public class LineController : MonoBehaviour
     [SerializeField] private GameObject[] listDot;
     private int idDot;
     private bool isMOveDot = true;
-    public void setBubbleMaps(List<List<BubbleMaps>> bubbleMaps)
-    {
-        this.bubbleMaps = bubbleMaps;
-        // string total = "[";
-        // foreach (var item in bubbleMaps)
-        // {
-        //     foreach (var item1 in item)
-        //     {
-        //         // total += JsonUtility.ToJson(item1);
-        //         // total += JsonUtility.ToJson(item1).ToString() + "," ;
-        //         total += item1.ToString();
-        //     }
-
-        // }
-        // for (int i = 0; i < bubbleMaps.Count; i++)
-        // {
-        //     var row = bubbleMaps[i];
-        //     for (int j = 0; j < row.Count; j++)
-        //     {
-        //         total += JsonUtility.ToJson(row[j]).ToString() + "," ;
-        //         Debug.Log("x: "+ i+ "y: " + j);
-        //     }
-            
-        // }
-        // total +="]";
-        // Debug.Log(total);
-    }
-    public void setIdDot(int idDot)
-    {
-        this.idDot = idDot;
-    }
-    public void SetUp(Vector2 start, Vector2 screenSize, List<List<BubbleMaps>> bubbleMaps)
+    public void SetUp(Vector2 start, Vector2 screenSize, List<List<BubbleMaps>> bubbleMaps, int rowBubbleHide)
     {
         this.start = start;
         this.screenSize = screenSize;
+        this.rowBubbleHide = rowBubbleHide;
         this.bubbleMaps = bubbleMaps;
+    }
+    public void SetStart(int idDot, List<List<BubbleMaps>> bubbleMaps, int rowBubbleHide)
+    {
+
+        this.idDot = idDot;
+        this.bubbleMaps = bubbleMaps;
+        this.rowBubbleHide = rowBubbleHide;
     }
     public List<Vector3> DrawPoints(Vector2 mousePosition)
     {
@@ -70,6 +48,11 @@ public class LineController : MonoBehaviour
         if (ray.collider != null)
         {
             if (ray.transform.gameObject.layer == LayerMask.NameToLayer("Bubble"))
+            {
+                posWall.Add(AddPositions(start, end, direction, true));
+                // Debug.Log(ray.collider.name);
+            }
+            else if (ray.collider.tag == "Top")
             {
                 posWall.Add(AddPositions(start, end, direction, true));
             }
@@ -125,8 +108,9 @@ public class LineController : MonoBehaviour
 
         for (int i = positions.Count - 1; i >= 0; i--)
         {
-            Vector2 index = LocationToIndex(positions[i]);
-            if (bubbleMaps[(int)index.y][(int)index.x].is_exist) positions.RemoveAt(i);
+            Vector2Int index = LocationToIndex(positions[i]);
+            if (bubbleMaps[index.y][index.x].isExist())
+                positions.RemoveAt(i);
             else break;
         }
         foreach (var pos in positions)
@@ -143,7 +127,7 @@ public class LineController : MonoBehaviour
             {
                 GameObject dot = dots[i];
                 Vector2 point;
-                if (i != dots.Count - 1)
+                if (i != dots.Count - 1) 
                 {
                     point = positions[i + 1];
 
@@ -179,31 +163,79 @@ public class LineController : MonoBehaviour
         positions.Clear();
         posWall.Clear();
     }
-
-    private Vector2 LocationToIndex(Vector2 mousePos)
+    private Vector2Int LocationToIndex(Vector2 mousePos)
     {
-        float x = 0f;
-        float y = Mathf.Floor(((screenSize.y) * 0.5f - mousePos.y) / 0.87f);
-        if (y % 2 == 0)
+        int count_Row_0 = 0;
+        if (rowBubbleHide >= 1) count_Row_0 = bubbleMaps[rowBubbleHide].Count;
+        else count_Row_0 = bubbleMaps[1].Count;
+
+        float constant = screenSize.y * 0.5f - GameDefine.SIZE_TOP_BAR.y * 0.8f;
+        if (rowBubbleHide > 0) constant = screenSize.y * 0.5f - GameDefine.SIZE_TOP_BAR.y * 0.8f;
+        else if (rowBubbleHide == 0) constant -= GameDefine.HEIGHT_ROW;
+        else constant -= 2;
+
+        float x = 0;
+        float y = Mathf.Floor((constant - mousePos.y) / GameDefine.HEIGHT_ROW);
+        if (count_Row_0 == 11)
         {
-            x = Mathf.Floor(mousePos.x + screenSize.x * 0.5f - GameDefine.SIZE_BUBBLE.x * 0.45f);
-            if (x > 10) x = 10;
+            if (rowBubbleHide == 0)
+            {
+                if (y % 2 == 0)
+                {
+                    x = Mathf.Floor(mousePos.x + screenSize.x * 0.5f - GameDefine.SIZE_BUBBLE.x * 0.45f);
+                    if (x > 9) x = 9;
+                }
+                else
+                {
+                    x = Mathf.Floor(mousePos.x + screenSize.x * 0.5f);
+                    if (x > 10) x = 10;
+                }
+            }
+            else
+            {
+                if (y % 2 == 0)
+                {
+                    x = Mathf.Floor(mousePos.x + screenSize.x * 0.5f);
+                    if (x > 10) x = 10;
+                }
+                else
+                {
+                    x = Mathf.Floor(mousePos.x + screenSize.x * 0.5f - GameDefine.SIZE_BUBBLE.x * 0.45f);
+                    if (x > 9) x = 9;
+                }
+            }
         }
         else
         {
-            x = Mathf.Floor(mousePos.x + screenSize.x * 0.5f);
-            if (x > 9) x = 10;
+            if (y % 2 == 0)
+            {
+                x = Mathf.Floor(mousePos.x + screenSize.x * 0.5f - GameDefine.SIZE_BUBBLE.x * 0.45f);
+                if (x > 9) x = 9;
+            }
+            else
+            {
+                x = Mathf.Floor(mousePos.x + screenSize.x * 0.5f);
+                if (x > 10) x = 10;
+            }
         }
+
         if (x < 0) x = 0;
-        return new Vector2(x, y);
+        if (y < 0) y = 0;
+        y += 1;
+        if (rowBubbleHide > 0) y += (rowBubbleHide - 1);
+        return new Vector2Int((int)x, (int)y);
     }
-    private Vector2 IndexToLocation(Vector2 index)
+    private Vector2 IndexToLocation(Vector2Int index)
     {
+
+        float constant = screenSize.y * 0.5f - GameDefine.SIZE_TOP_BAR.y + GameDefine.HEIGHT_ROW * 0.5f;
+        float y = constant - index.y * GameDefine.HEIGHT_ROW;
         Vector2 pos;
         if (index.y % 2 == 0)
-            pos = new Vector2(-screenSize.x * 0.5f + GameDefine.SIZE_BUBBLE.x * 0.95f + index.x, (screenSize.y - GameDefine.SIZE_BUBBLE.y) * 0.5f - index.y * 0.87f);
+            pos = new Vector2(-screenSize.x / 2 + GameDefine.SIZE_BUBBLE.x * 0.95f + index.x, y);
         else
-            pos = new Vector2(-screenSize.x * 0.5f + GameDefine.SIZE_BUBBLE.x / 2 + index.x, (screenSize.y - GameDefine.SIZE_BUBBLE.y) * 0.5f - index.y * 0.87f);
+            pos = new Vector2(-screenSize.x / 2 + GameDefine.SIZE_BUBBLE.x / 2 + index.x, y);
+
         return pos;
     }
 }
