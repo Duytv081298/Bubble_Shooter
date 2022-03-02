@@ -1,0 +1,174 @@
+
+Dino_water.png
+size: 512,256
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Bubble_khongmau copy
+  rotate: false
+  xy: 149, 109
+  size: 145, 145
+  orig: 145, 145
+  offset: 0, 0
+  index: -1
+Layer 357
+  rotate: true
+  xy: 149, 2
+  size: 105, 111
+  orig: 105, 111
+  offset: 0, 0
+  index: -1
+bubble
+  rotate: false
+  xy: 2, 108
+  size: 145, 146
+  orig: 145, 146
+  offset: 0, 0
+  index: -1
+cry
+  rotate: false
+  xy: 296, 196
+  size: 45, 11
+  orig: 45, 11
+  offset: 0, 0
+  index: -1
+eye_close_1_back
+  rotate: false
+  xy: 418, 209
+  size: 14, 13
+  orig: 14, 13
+  offset: 0, 0
+  index: -1
+eye_close_1_front
+  rotate: false
+  xy: 446, 236
+  size: 24, 18
+  orig: 24, 18
+  offset: 0, 0
+  index: -1
+eye_close_1_smile
+  rotate: true
+  xy: 2, 5
+  size: 24, 18
+  orig: 24, 18
+  offset: 0, 0
+  index: -1
+eye_close_2_back
+  rotate: false
+  xy: 472, 242
+  size: 13, 12
+  orig: 13, 12
+  offset: 0, 0
+  index: -1
+eye_close_2_front
+  rotate: false
+  xy: 70, 89
+  size: 23, 17
+  orig: 23, 17
+  offset: 0, 0
+  index: -1
+eye_close_2_smile
+  rotate: true
+  xy: 262, 32
+  size: 23, 17
+  orig: 23, 17
+  offset: 0, 0
+  index: -1
+eye_open_1_back
+  rotate: false
+  xy: 281, 92
+  size: 13, 15
+  orig: 13, 15
+  offset: 0, 0
+  index: -1
+eye_open_1_front
+  rotate: false
+  xy: 321, 176
+  size: 15, 18
+  orig: 15, 18
+  offset: 0, 0
+  index: -1
+eye_open_2_back
+  rotate: false
+  xy: 296, 147
+  size: 16, 19
+  orig: 16, 19
+  offset: 0, 0
+  index: -1
+eye_open_2_front
+  rotate: false
+  xy: 296, 168
+  size: 23, 26
+  orig: 23, 26
+  offset: 0, 0
+  index: -1
+foot_back_1
+  rotate: false
+  xy: 418, 224
+  size: 26, 30
+  orig: 26, 30
+  offset: 0, 0
+  index: -1
+foot_back_2
+  rotate: true
+  xy: 23, 48
+  size: 20, 14
+  orig: 20, 14
+  offset: 0, 0
+  index: -1
+foot_front_1
+  rotate: false
+  xy: 2, 70
+  size: 36, 36
+  orig: 36, 36
+  offset: 0, 0
+  index: -1
+foot_front_2
+  rotate: false
+  xy: 40, 82
+  size: 28, 24
+  orig: 28, 24
+  offset: 0, 0
+  index: -1
+ilde
+  rotate: true
+  xy: 262, 57
+  size: 50, 17
+  orig: 50, 17
+  offset: 0, 0
+  index: -1
+smile1
+  rotate: false
+  xy: 343, 199
+  size: 19, 8
+  orig: 19, 8
+  offset: 0, 0
+  index: -1
+smile2
+  rotate: true
+  xy: 2, 31
+  size: 37, 19
+  orig: 37, 19
+  offset: 0, 0
+  index: -1
+tear1
+  rotate: false
+  xy: 40, 73
+  size: 16, 7
+  orig: 16, 7
+  offset: 0, 0
+  index: -1
+tear2
+  rotate: false
+  xy: 446, 225
+  size: 6, 9
+  orig: 6, 9
+  offset: 0, 0
+  index: -1
+water
+  rotate: false
+  xy: 296, 209
+  size: 120, 45
+  orig: 120, 45
+  offset: 0, 0
+  index: -1

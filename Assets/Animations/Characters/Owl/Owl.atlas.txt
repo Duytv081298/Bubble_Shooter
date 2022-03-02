@@ -1,0 +1,230 @@
+
+Owl.png
+size: 1024,1024
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+body
+  rotate: false
+  xy: 2, 492
+  size: 248, 304
+  orig: 248, 304
+  offset: 0, 0
+  index: -1
+bog_3
+  rotate: false
+  xy: 2, 66
+  size: 172, 227
+  orig: 172, 227
+  offset: 0, 0
+  index: -1
+bog_3a
+  rotate: true
+  xy: 765, 871
+  size: 151, 220
+  orig: 151, 220
+  offset: 0, 0
+  index: -1
+bow_tie
+  rotate: false
+  xy: 762, 771
+  size: 128, 98
+  orig: 128, 98
+  offset: 0, 0
+  index: -1
+cheek_left
+  rotate: true
+  xy: 987, 925
+  size: 58, 34
+  orig: 58, 34
+  offset: 0, 0
+  index: -1
+cheek_right
+  rotate: true
+  xy: 209, 404
+  size: 86, 47
+  orig: 86, 47
+  offset: 0, 0
+  index: -1
+closed_eye_left1
+  rotate: false
+  xy: 258, 421
+  size: 67, 69
+  orig: 67, 69
+  offset: 0, 0
+  index: -1
+closed_eye_left1_2
+  rotate: false
+  xy: 2, 2
+  size: 58, 62
+  orig: 58, 62
+  offset: 0, 0
+  index: -1
+closed_eye_left2
+  rotate: false
+  xy: 330, 491
+  size: 56, 41
+  orig: 56, 41
+  offset: 0, 0
+  index: -1
+closed_eye_left2_2
+  rotate: false
+  xy: 388, 486
+  size: 54, 46
+  orig: 54, 46
+  offset: 0, 0
+  index: -1
+closed_eye_right1
+  rotate: false
+  xy: 614, 687
+  size: 88, 71
+  orig: 88, 71
+  offset: 0, 0
+  index: -1
+closed_eye_right1_2
+  rotate: false
+  xy: 614, 622
+  size: 85, 63
+  orig: 85, 63
+  offset: 0, 0
+  index: -1
+closed_eye_right2
+  rotate: false
+  xy: 252, 492
+  size: 76, 46
+  orig: 76, 46
+  offset: 0, 0
+  index: -1
+closed_eye_right2_2
+  rotate: true
+  xy: 258, 343
+  size: 76, 47
+  orig: 76, 47
+  offset: 0, 0
+  index: -1
+eye_left1
+  rotate: false
+  xy: 176, 239
+  size: 36, 54
+  orig: 36, 54
+  offset: 0, 0
+  index: -1
+eye_left2
+  rotate: true
+  xy: 62, 3
+  size: 61, 84
+  orig: 61, 84
+  offset: 0, 0
+  index: -1
+eye_right1
+  rotate: false
+  xy: 704, 694
+  size: 55, 64
+  orig: 55, 64
+  offset: 0, 0
+  index: -1
+eye_right2
+  rotate: false
+  xy: 892, 777
+  size: 85, 92
+  orig: 85, 92
+  offset: 0, 0
+  index: -1
+foot_left
+  rotate: false
+  xy: 327, 437
+  size: 54, 52
+  orig: 54, 52
+  offset: 0, 0
+  index: -1
+foot_right
+  rotate: true
+  xy: 383, 435
+  size: 49, 53
+  orig: 49, 53
+  offset: 0, 0
+  index: -1
+light02
+  rotate: false
+  xy: 2, 295
+  size: 205, 195
+  orig: 205, 195
+  offset: 0, 0
+  index: -1
+lower lip
+  rotate: false
+  xy: 987, 985
+  size: 35, 37
+  orig: 35, 37
+  offset: 0, 0
+  index: -1
+shadow
+  rotate: true
+  xy: 252, 540
+  size: 256, 77
+  orig: 256, 77
+  offset: 0, 0
+  index: -1
+shadow2
+  rotate: false
+  xy: 368, 795
+  size: 256, 77
+  orig: 256, 77
+  offset: 0, 0
+  index: -1
+shadow_tree
+  rotate: false
+  xy: 368, 874
+  size: 395, 148
+  orig: 395, 148
+  offset: 0, 0
+  index: -1
+tear2
+  rotate: false
+  xy: 148, 33
+  size: 23, 31
+  orig: 23, 31
+  offset: 0, 0
+  index: -1
+tree
+  rotate: false
+  xy: 2, 798
+  size: 364, 224
+  orig: 364, 224
+  offset: 0, 0
+  index: -1
+upper lip
+  rotate: false
+  xy: 209, 324
+  size: 47, 78
+  orig: 47, 78
+  offset: 0, 0
+  index: -1
+wing_back
+  rotate: true
+  xy: 626, 760
+  size: 112, 134
+  orig: 112, 134
+  offset: 0, 0
+  index: -1
+wing_fly_left
+  rotate: false
+  xy: 495, 636
+  size: 117, 157
+  orig: 117, 157
+  offset: 0, 0
+  index: -1
+wing_fly_right
+  rotate: false
+  xy: 331, 634
+  size: 162, 159
+  orig: 162, 159
+  offset: 0, 0
+  index: -1
+wing_front
+  rotate: true
+  xy: 331, 534
+  size: 98, 151
+  orig: 98, 151
+  offset: 0, 0
+  index: -1

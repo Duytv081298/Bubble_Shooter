@@ -25,6 +25,7 @@ public class BubbleController : MonoBehaviour
     }
     private GameObject player;
     private Vector2Int indexPlayerEnd;
+    [SerializeField] private EffectsController effectsController;
 
     [Range(0.1f, 1f)]
     [SerializeField] private float thrust_force;
@@ -101,7 +102,6 @@ public class BubbleController : MonoBehaviour
             }
         }
         return maxRow;
-
     }
     private void Move(int num, bool is_play)
     {
@@ -110,7 +110,11 @@ public class BubbleController : MonoBehaviour
         if (rowDefault > 11)
         {
             transform.DOMoveY(num * GameDefine.HEIGHT_ROW, 1).SetDelay(1)
-            .OnComplete(() => { this.play = is_play; });
+            .OnComplete(() =>
+            {
+                this.play = is_play;
+                effectsController.StartAnimationDino_Owl();
+            });
         }
     }
     public Vector3 getPosition()
@@ -207,6 +211,7 @@ public class BubbleController : MonoBehaviour
         bubbleMaps[this.indexPlayerEnd.y][this.indexPlayerEnd.x].setBubble(player);
         bubbleMaps[this.indexPlayerEnd.y][this.indexPlayerEnd.x].setExist(true);
         bubbleMaps[this.indexPlayerEnd.y][this.indexPlayerEnd.x].color = player.tag;
+        var idColor = ColorToID(player.tag);
         player.transform.SetParent(transform);
         Collider2D col = player.GetComponent<Collider2D>();
         col.enabled = true;
@@ -219,8 +224,15 @@ public class BubbleController : MonoBehaviour
             foreach (var index in listBoom)
             {
                 RemoveBubble(index);
+                // Debug.Log("index: " + index + "__loc: " + GetWorldLocation(IndexToLocation(index)));
+                effectsController.PlayEffect(idColor, GetWorldLocation(IndexToLocation(index)));
                 yield return new WaitForSeconds(0.1f);
             }
+        }
+        if (listBoom.Count > 9)
+        {
+
+            effectsController.SetAnimation("Idle3");
         }
 
         TurnOffCheck();
@@ -390,20 +402,26 @@ public class BubbleController : MonoBehaviour
     }
     public IEnumerator RemoveBubbleDisconnect(List<Vector2Int> listDisconnect)
     {
-        logArray(listDisconnect);
+        // logArray(listDisconnect);
         for (int i = 0; i < listDisconnect.Count; i++)
         {
             var bubbleM = bubbleMaps[listDisconnect[i].y][listDisconnect[i].x];
+            var idColor = ColorToID(bubbleM.color);
             var bubble = bubbleM.getBubble();
-            bubble.transform.DOMoveY(-5f, 1)
+            var loc = GetWorldLocation(IndexToLocation(listDisconnect[i]));
+            Vector2 loc1 = new Vector2(Random.Range(loc.x - 1f, loc.x + 1f), Random.Range(-3f, -4.5f));
+            bubble.transform.DOMove(loc1, Random.Range(0.3f, 0.7f))
+            .SetEase(Ease.InBack)
             .OnComplete(() =>
             {
+                effectsController.PlayEffect(idColor, loc1);
                 bubbleM.getBubble().transform.DOKill();
                 Destroy(bubble);
                 bubbleM.Destroy();
             });
         }
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.7f);
+        // effectsController.SetAnimation("Idle3");
 
         Vector2 maxIndex = getMaxRow();
         int newRowBubbleHide = (int)maxIndex.x - 11;
@@ -415,6 +433,7 @@ public class BubbleController : MonoBehaviour
            .OnComplete(() => { this.play = true; });
             this.rowBubbleHide = newRowBubbleHide;
         }
+        Debug.Log(CheckWin());
     }
     private List<Vector2Int> CheckConnection(Vector2Int index)
     {
@@ -594,5 +613,17 @@ public class BubbleController : MonoBehaviour
                 break;
         }
         return id;
+    }
+
+    public bool CheckWin()
+    {
+        for (int i = 1; i < bubbleMaps.Count; i++)
+        {
+            foreach (var item in bubbleMaps[i])
+            {
+                if (item.isExist()) return false;
+            }
+        }
+        return true;
     }
 }
